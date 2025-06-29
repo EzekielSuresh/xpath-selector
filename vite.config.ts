@@ -18,7 +18,8 @@ export default defineConfig({
     // assetsDir: ".",
     rollupOptions: {
       input: {
-        contentScript: path.resolve(__dirname, "src/contentScript.tsx")
+        background: path.resolve(__dirname, "src/background/background.ts"),
+        contentScript: path.resolve(__dirname, "src/content/contentScript.tsx")
       },
       output: {
         entryFileNames: "[name].js",
