@@ -1,8 +1,10 @@
 // contentScript.tsx
 import React from "react";
 import { createRoot } from "react-dom/client";
+import type { Root } from "react-dom/client";
 import App from "../App";
 
+// --Helper Functions--
 function injectCSS(shadowRoot: ShadowRoot, href: string) {
   const link = document.createElement("link");
   link.rel = "stylesheet";
@@ -37,41 +39,68 @@ function injectThemeVariables(shadowRoot: ShadowRoot) {
   shadowRoot.appendChild(style);
 }
 
-// Create floating container
-const container = document.createElement("div");
-container.id = "xpath-selector-floating-ui";
-container.style.position = "fixed";
-container.style.maxWidth = "448px"
-container.style.width = "100%"
-container.style.top = "32px";
-container.style.right = "32px";
-container.style.zIndex = "999999";
-container.style.background = "none";
-container.style.pointerEvents = "none";
+// --UI Injection Logic--
 
-// Attach Shadow DOM
-const shadow = container.attachShadow({ mode: "open" });
+let uiInjected = false
+let container: HTMLDivElement | null=null
+let root: Root | null=null
 
-// Inject theme variables
-injectThemeVariables(shadow);
+function injectUI() {
+  if(uiInjected) return
 
-// Allow pointer events for Card
-const cardWrapper = document.createElement("div");
-cardWrapper.style.pointerEvents = "auto";
-// Optional: Dark Mode
-// cardWrapper.classList.add("dark");
-shadow.appendChild(cardWrapper);
+  // Create floating container
+  container = document.createElement("div");
+  container.id = "xpath-selector-floating-ui";
+  container.style.position = "fixed";
+  container.style.maxWidth = "448px"
+  container.style.width = "100%"
+  container.style.top = "32px";
+  container.style.right = "32px";
+  container.style.zIndex = "999999";
+  container.style.background = "none";
+  container.style.pointerEvents = "none";
 
-document.body.appendChild(container);
+  // Attach Shadow DOM
+  const shadow = container.attachShadow({ mode: "open" });
 
-// Inject CSS into Shadow DOM
-const cssHref = chrome.runtime.getURL("assets/index.css");
-injectCSS(shadow, cssHref);
+  // Inject theme variables
+  injectThemeVariables(shadow);
 
-// Render React app into Shadow DOM
-const root = createRoot(cardWrapper);
-root.render(
-    <React.StrictMode>
-        <App />
-    </React.StrictMode>
-);
+  // Allow pointer events for Card
+  const cardWrapper = document.createElement("div");
+  cardWrapper.style.pointerEvents = "auto";
+  // Optional: Dark Mode
+  // cardWrapper.classList.add("dark");
+  shadow.appendChild(cardWrapper);
+
+  document.body.appendChild(container);
+
+  // Inject CSS into Shadow DOM
+  const cssHref = chrome.runtime.getURL("assets/index.css");
+  injectCSS(shadow, cssHref);
+
+  // Render React app into Shadow DOM
+  root = createRoot(cardWrapper);
+  root.render(
+      <React.StrictMode>
+          <App />
+      </React.StrictMode>
+  );
+
+  uiInjected = true
+}
+
+export function removeUI() {
+  if (container) {
+    container.remove()
+    container = null
+    uiInjected = false
+    root = null
+  }
+}
+
+chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
+  if (message.type == "show_xpath_selector"){
+    injectUI()
+  }
+})
