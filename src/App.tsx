@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { X } from 'lucide-react'
 import './index.css'
+import { useInspectMode } from "./hooks/useInspectMode"
 
 type AppProps = {
   onClose?: () => void
@@ -22,8 +23,31 @@ function App({ onClose }: AppProps) {
 
   const [active, setActive] = useState(false)
 
+  // Custom hook handles inspect logic
+  const { startInspect, stopInspect } = useInspectMode({
+    onSelect: (xpath: string) => {
+      console.log(xpath)
+      stopInspect();
+      setActive(false);
+      // Optionally copy to clipboard:
+      // navigator.clipboard.writeText(xpath);
+    },
+    onStop: () => setActive(false)
+  });
+
   const handleStart = () => {
-    setActive((prev) => !prev)
+    if (!active) {
+      startInspect();
+      setActive(true);
+    } else {
+      stopInspect();
+      setActive(false);
+    }
+  };
+
+  const handleClose = () => {
+    stopInspect()
+    if (onClose) onClose()
   }
 
   return (
@@ -33,7 +57,7 @@ function App({ onClose }: AppProps) {
             <CardTitle className="text-left text-2xl">xpath selector</CardTitle>
             <CardDescription className="text-left">Click 'Start' to select element xpath</CardDescription>
             <CardAction>
-              <Button onClick={onClose} variant="ghost" className="size-8 text-gray-500">
+              <Button onClick={handleClose} variant="ghost" className="size-8 text-gray-500">
                 <X />
               </Button>
             </CardAction>
