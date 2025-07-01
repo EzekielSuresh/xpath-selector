@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import {
   Card,
   CardAction,
@@ -18,6 +18,8 @@ type AppProps = {
 
 function App({ onClose }: AppProps) {
 
+  const nodeRef = useRef<HTMLDivElement>(null)
+
   const [active, setActive] = useState(false)
 
   const handleStart = () => {
@@ -25,29 +27,29 @@ function App({ onClose }: AppProps) {
   }
 
   return (
-    <div>
-      <Card className="w-full max-w-md border-none bg-card">
-        <CardHeader>
-          <CardTitle className="text-left text-2xl">xpath selector</CardTitle>
-          <CardDescription className="text-left">Click 'Start' to select element xpath</CardDescription>
-          <CardAction>
-            <Button onClick={onClose} variant="ghost" className="size-8 text-gray-500">
-              <X />
+      <div ref={nodeRef}>
+        <Card className="w-full max-w-md border-none bg-card">
+          <CardHeader>
+            <CardTitle className="text-left text-2xl">xpath selector</CardTitle>
+            <CardDescription className="text-left">Click 'Start' to select element xpath</CardDescription>
+            <CardAction>
+              <Button onClick={onClose} variant="ghost" className="size-8 text-gray-500">
+                <X />
+              </Button>
+            </CardAction>
+          </CardHeader>
+          <CardContent></CardContent>
+          <CardFooter>
+            <Button 
+              variant={active ? "outline" : "default"}
+              onClick={handleStart}
+              className="w-full"
+            >
+              {active ? "Stop" : "Start"}
             </Button>
-          </CardAction>
-        </CardHeader>
-        <CardContent></CardContent>
-        <CardFooter>
-          <Button 
-            variant={active ? "outline" : "default"}
-            onClick={handleStart}
-            className="w-full"
-          >
-            {active ? "Stop" : "Start"}
-          </Button>
-        </CardFooter>
-      </Card>
-    </div>
+          </CardFooter>
+        </Card>
+      </div>
   )
 }
 
