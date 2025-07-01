@@ -83,7 +83,7 @@ function injectUI() {
   root = createRoot(cardWrapper);
   root.render(
       <React.StrictMode>
-          <App />
+          <App onClose={removeUI} />
       </React.StrictMode>
   );
 

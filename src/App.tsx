@@ -12,7 +12,11 @@ import { Button } from "@/components/ui/button"
 import { X } from 'lucide-react'
 import './index.css'
 
-function App() {
+type AppProps = {
+  onClose?: () => void
+}
+
+function App({ onClose }: AppProps) {
 
   const [active, setActive] = useState(false)
 
@@ -27,7 +31,7 @@ function App() {
           <CardTitle className="text-left text-2xl">xpath selector</CardTitle>
           <CardDescription className="text-left">Click 'Start' to select element xpath</CardDescription>
           <CardAction>
-            <Button variant="ghost" className="size-8 text-gray-500">
+            <Button onClick={onClose} variant="ghost" className="size-8 text-gray-500">
               <X />
             </Button>
           </CardAction>
