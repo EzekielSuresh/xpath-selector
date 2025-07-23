@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Input } from "./components/ui/input"
 import { X } from 'lucide-react'
 import './index.css'
 import { useInspectMode } from "./hooks/useInspectMode"
@@ -22,10 +23,12 @@ function App({ onClose }: AppProps) {
   const nodeRef = useRef<HTMLDivElement>(null)
 
   const [active, setActive] = useState(false)
+  const [xpath, setXpath] = useState<string | null>(null)
 
   // Custom hook handles inspect logic
   const { startInspect, stopInspect } = useInspectMode({
-    onSelect: (xpath: string) => {
+    onSelect: (xpath_str: string) => {
+      setXpath(xpath_str)
       console.log(xpath)
       stopInspect();
       setActive(false);
@@ -62,7 +65,23 @@ function App({ onClose }: AppProps) {
               </Button>
             </CardAction>
           </CardHeader>
-          <CardContent></CardContent>
+          <CardContent>
+            { xpath? (
+              <div className="flex flex-row gap-2 space-y-2">
+                <Input 
+                  className="font-mono text-xs w-[150px] text-center"
+                  value="item 1"
+                />
+                <Input 
+                  className="font-mono text-xs text-muted-foreground"
+                  value={xpath}
+                  readOnly
+                />
+              </div> 
+            ) : (
+              <div></div>
+            )}
+          </CardContent>
           <CardFooter>
             <Button 
               variant={active ? "outline" : "default"}

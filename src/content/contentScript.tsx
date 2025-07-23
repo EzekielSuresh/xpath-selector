@@ -35,6 +35,7 @@ function injectThemeVariables(shadowRoot: ShadowRoot) {
       --input: oklch(92% .004 286.32);
       --ring: oklch(70.5% .015 286.067);
     }
+    .border { border-width: 1px; border-style: solid; }
   `;
   shadowRoot.appendChild(style);
 }
