@@ -23,13 +23,13 @@ function App({ onClose }: AppProps) {
   const nodeRef = useRef<HTMLDivElement>(null)
 
   const [active, setActive] = useState(false)
-  const [xpath, setXpath] = useState<string | null>(null)
+  const [xpaths, setXpath] = useState<string[]>([])
 
   // Custom hook handles inspect logic
   const { startInspect, stopInspect } = useInspectMode({
     onSelect: (xpath_str: string) => {
-      setXpath(xpath_str)
-      console.log(xpath)
+      setXpath(prev => [...prev, xpath_str])
+      console.log(xpaths)
       stopInspect();
       setActive(false);
       // Optionally copy to clipboard:
@@ -66,17 +66,21 @@ function App({ onClose }: AppProps) {
             </CardAction>
           </CardHeader>
           <CardContent>
-            { xpath? (
-              <div className="flex flex-row gap-2 space-y-2">
-                <Input 
-                  className="font-mono text-xs w-[150px] text-center"
-                  value="item 1"
-                />
-                <Input 
-                  className="font-mono text-xs text-muted-foreground"
-                  value={xpath}
-                  readOnly
-                />
+            { xpaths.length > 0 ? (
+              <div className="flex flex-col gap-2">
+                {xpaths.map((xpath, idx) => (
+                  <div className="flex flex-row gap-2">
+                    <Input 
+                      className="font-mono text-xs w-[150px] text-center"
+                      value={`item ${idx + 1}`}
+                    />
+                    <Input 
+                      className="font-mono text-xs text-muted-foreground"
+                      value={xpath}
+                      readOnly
+                    />
+                  </div>
+                ))}           
               </div> 
             ) : (
               <div></div>
