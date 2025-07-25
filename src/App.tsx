@@ -11,6 +11,9 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "./components/ui/input"
 import { X } from 'lucide-react'
+import { Copy } from 'lucide-react'
+import { Trash } from 'lucide-react'
+import { Group } from 'lucide-react'
 import './index.css'
 import { useInspectMode } from "./hooks/useInspectMode"
 
@@ -24,6 +27,7 @@ function App({ onClose }: AppProps) {
 
   const [active, setActive] = useState(false)
   const [xpaths, setXpath] = useState<string[]>([])
+  const [deleteMode, setDeleteMode] = useState(false)
 
   // Custom hook handles inspect logic
   const { startInspect, stopInspect } = useInspectMode({
@@ -53,6 +57,10 @@ function App({ onClose }: AppProps) {
     if (onClose) onClose()
   }
 
+  const handleDeleteXpath = (idx: number) => {
+    setXpath(prev => prev.filter((_, i) => i !== idx))
+  }
+
   return (
       <div ref={nodeRef}>
         <Card className="w-full max-w-md border-none bg-card">
@@ -79,8 +87,44 @@ function App({ onClose }: AppProps) {
                       value={xpath}
                       readOnly
                     />
+                    {deleteMode && (
+                      <Button
+                        variant="ghost"
+                        className="text-red-500"
+                        onClick={() => handleDeleteXpath(idx)}
+                      >
+                        <Trash />
+                      </Button>
+                    )}
                   </div>
-                ))}           
+                ))}
+                <div className="flex flex-row justify-end">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-neutral-400"
+                  >
+                    <Group />
+                    Group
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-neutral-400"
+                  >
+                    <Copy />
+                    Copy JSON
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-red-400 hover:bg-red-50 hover:text-red-500"
+                    onClick={() => setDeleteMode((prev) => !prev)}
+                  >
+                    {deleteMode ? <X /> : <Trash />}
+                    {deleteMode ? "Cancel" : "Delete"}
+                  </Button>
+                </div>           
               </div> 
             ) : (
               <div></div>
