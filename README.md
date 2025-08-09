@@ -1,5 +1,7 @@
 # xpath-selector
 
+![Extension Preview](src/assets/extension.png)
+
 A simple React-based extension for selecting, naming, grouping and extracting xpaths from web pages. Designed for developers who need to structure and organize their web scraping projects.
 
 This extension features:
